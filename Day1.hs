@@ -7,18 +7,26 @@ import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as BS
 import Data.Functor
 
-data Turn = L Int | R Int deriving (Show, Eq)
+data OldTurn = L Int | R Int deriving (Show, Eq)
+type Turn = Int
 type Pos = Int
 
 dial :: Pos
 dial = 50
 
+-- turn :: Pos -> Turn -> Pos
+-- turn d (L n) = (d - n) `mod` 100
+-- turn d (R n) = (d + n) `mod` 100
+
 turn :: Pos -> Turn -> Pos
-turn d (L n) = (d - n) `mod` 100
-turn d (R n) = (d + n) `mod` 100
+turn p t = (p+t) `mod` 100
 
 e1 :: [Turn]
-e1 = [L 68, L 30, R 48, L 5, R 60, L 55, L 1, L 99, R 14, L 82]
+e1 = map oldTurnToNew [L 68, L 30, R 48, L 5, R 60, L 55, L 1, L 99, R 14, L 82]
+
+oldTurnToNew :: OldTurn -> Turn
+oldTurnToNew (L n) = negate n
+oldTurnToNew (R n) = n
 
 positions :: [Turn] -> [Pos]
 positions = scanl turn dial
@@ -31,17 +39,22 @@ password ts = length $ filter (== 0) $ positions ts
 
 -- Part 2 - password method 0x434C49434B
 
-passwordMethod2 :: [Turn] -> Int
-passwordMethod2 = length . filter (== 0) . allPositions
+passwordMethod2' :: [Turn] -> Int
+passwordMethod2' = length . filter (== 0) . allPositions
     where
         allPositions :: [Turn] -> [Pos]
         allPositions turns = concatMap expandTurn (zip (positions turns) turns)
         
         expandTurn :: (Pos, Turn) -> [Pos]
-        expandTurn (start, L n) = take n $ iterate (\p -> (p - 1) `mod` 100) start
-        expandTurn (start, R n) = take n $ iterate (\p -> (p + 1) `mod` 100) start
+        expandTurn (start, n) = take (abs n) $ iterate (\p -> (p + signum n) `mod` 100) start
 
 -- Above is inefficient but i spent too long trying to do it better
+
+passwordMethod2 :: [Turn] -> Int
+passwordMethod2 ts = sum $ zipWith zeros (positions ts) ts
+    where zeros p t
+            | t > 0     = (p+t) `div` 100
+            | otherwise = (p+t) `div` (-100) - p `div` (-100)
 
 ------------------------------------------------------------------------
 -- Getting problem input
@@ -50,14 +63,14 @@ passwordMethod2 = length . filter (== 0) . allPositions
 day1InputUrl :: String
 day1InputUrl = "https://adventofcode.com/2025/day/1/input"
 
-bsToTurns :: ByteString -> [Turn]
-bsToTurns = map parse . lines . BS.unpack
+strToTurns :: String -> [Turn]
+strToTurns = map parse . lines
     where
-        parse ('L':n) = L (read n)
-        parse ('R':n) = R (read n)
+        parse ('L':n) = negate $ read n
+        parse ('R':n) = read n
 
 day1Input :: IO [Turn]
-day1Input = fetchAOCBody day1InputUrl <&> bsToTurns
+day1Input = fetchAOCBody day1InputUrl <&> strToTurns . BS.unpack
 
 ------------------------------------------------------------------------
 
