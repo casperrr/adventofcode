@@ -2,7 +2,6 @@
 module Day1 where
 
 import Util.FetchInput
-import Network.HTTP.Simple
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as BS
 import Data.Functor

@@ -10,7 +10,7 @@ maintainer:         casper.sebastien@gmail.com
 -- copyright:
 category:           advent of code
 build-type:         Simple
-extra-doc-files:    CHANGELOG.md
+-- extra-doc-files:    CHANGELOG.md
 -- extra-source-files:
 
 executable adventofcode2025
