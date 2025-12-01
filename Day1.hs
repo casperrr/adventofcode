@@ -1,5 +1,8 @@
-module Day1 where
 -- Advent of code - Day 1
+module Day1 where
+
+import Util.FetchInput
+import Network.HTTP.Simple
 
 data Turn = L Int | R Int deriving (Show, Eq)
 type Pos = Int
@@ -22,3 +25,7 @@ positions = scanl turn dial
 
 password :: [Turn] -> Int
 password ts = length $ filter (== 0) $ positions ts
+
+------------------------------------------------------------------------
+-- Getting problem input 
+------------------------------------------------------------------------
