@@ -3,6 +3,9 @@ module Day1 where
 
 import Util.FetchInput
 import Network.HTTP.Simple
+import Data.ByteString (ByteString)
+import qualified Data.ByteString.Char8 as BS
+import Data.Functor
 
 data Turn = L Int | R Int deriving (Show, Eq)
 type Pos = Int
@@ -29,3 +32,20 @@ password ts = length $ filter (== 0) $ positions ts
 ------------------------------------------------------------------------
 -- Getting problem input 
 ------------------------------------------------------------------------
+
+day1InputUrl :: String
+day1InputUrl = "https://adventofcode.com/2025/day/1/input"
+
+bsToTurns :: ByteString -> [Turn]
+bsToTurns = map parse . lines . BS.unpack
+    where
+        parse ('L':n) = L (read n)
+        parse ('R':n) = R (read n)
+
+day1Input :: IO [Turn]
+day1Input = fetchAOCBody day1InputUrl <&> bsToTurns
+
+------------------------------------------------------------------------
+
+day1 :: IO Int
+day1 = password <$> day1Input
