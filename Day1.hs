@@ -29,8 +29,22 @@ positions = scanl turn dial
 password :: [Turn] -> Int
 password ts = length $ filter (== 0) $ positions ts
 
+-- Part 2 - password method 0x434C49434B
+
+passwordMethod2 :: [Turn] -> Int
+passwordMethod2 = length . filter (== 0) . allPositions
+    where
+        allPositions :: [Turn] -> [Pos]
+        allPositions turns = concatMap expandTurn (zip (positions turns) turns)
+        
+        expandTurn :: (Pos, Turn) -> [Pos]
+        expandTurn (start, L n) = take n $ iterate (\p -> (p - 1) `mod` 100) start
+        expandTurn (start, R n) = take n $ iterate (\p -> (p + 1) `mod` 100) start
+
+-- Above is inefficient but i spent too long trying to do it better
+
 ------------------------------------------------------------------------
--- Getting problem input 
+-- Getting problem input
 ------------------------------------------------------------------------
 
 day1InputUrl :: String
@@ -49,3 +63,6 @@ day1Input = fetchAOCBody day1InputUrl <&> bsToTurns
 
 day1 :: IO Int
 day1 = password <$> day1Input
+
+day1' :: IO Int
+day1' = passwordMethod2 <$> day1Input
