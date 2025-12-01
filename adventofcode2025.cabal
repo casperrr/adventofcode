@@ -1,0 +1,22 @@
+cabal-version:      3.0
+name:               adventofcode2025
+version:            0.1.0.0
+-- synopsis:
+-- description:
+license:            GPL-2.0-only
+license-file:       LICENSE
+author:             casperrr
+maintainer:         casper.sebastien@gmail.com
+-- copyright:
+category:           advent of code
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+-- extra-source-files:
+
+executable adventofcode2025
+    main-is:          Main.hs
+    other-modules:    Day1
+    -- other-extensions:
+    build-depends:    base ^>=4.18.3.0
+    hs-source-dirs:   .
+    default-language: Haskell2010

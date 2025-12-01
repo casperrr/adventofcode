@@ -1,5 +1,5 @@
+module Day1 where
 -- Advent of code - Day 1
-
 
 data Turn = L Int | R Int deriving (Show, Eq)
 type Pos = Int
