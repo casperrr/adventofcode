@@ -16,12 +16,14 @@ build-type:         Simple
 executable adventofcode2025
     main-is:          Main.hs
     other-modules:    Day1,
+                      Day2,
                       Util.FetchInput
     -- other-extensions: 
     build-depends:    base ^>=4.18.3.0,
                       dotenv,
                       http-conduit,
                       http-types,
-                      bytestring
+                      bytestring,
+                      split
     hs-source-dirs:   .
     default-language: Haskell2010
