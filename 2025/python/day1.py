@@ -1,34 +1,23 @@
 import dotenv
 import os
 import requests
+from itertools import accumulate
 
 # Read in input
 dotenv.load_dotenv()
 aoc_session = os.getenv('AOC_SESSION')
 
-response = requests.get(
+data = requests.get(
     'https://adventofcode.com/2025/day/1/input',
     cookies={'session': aoc_session}
-)
-# print(response.text)
+).text.strip().split('\n')
 
-input_data = response.text.strip().split('\n')
+# Part 1 - count number of times a turn lands on 0
+turns = [-int(line[1:]) if line[0] == 'L' else int(line[1:]) for line in data]
+d1p1 = sum(p%100==0 for p in accumulate(turns, initial=50))
+print(f"Part 1: {d1p1}")
 
-def parse(data):
-    direction, value = data[0], int(data[1:])
-    return -int(value) if direction == 'L' else int(value)
-
-turns = [parse(line) for line in input_data]
-
-# print(turns)
-
-def turn(pos, turn):
-    return (pos + turn) % 100
-
-positions = [50]
-for i, t in enumerate(turns):
-    positions.append(turn(positions[-1], t))
-
-part1 = len(list(filter(lambda x: x == 0, positions)))
-
-print(part1)
+# Part 2 - count number of times a turn crosses 0
+positions = list(accumulate(turns, lambda p, t: (p+t)%100, initial=50))
+d1p2 = sum((p+t)//100 if t>0 else (p+t)//-100-p//-100 for p, t in zip(positions, turns))
+print(f"Part 2: {d1p2}")
