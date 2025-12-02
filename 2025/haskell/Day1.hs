@@ -59,9 +59,6 @@ passwordMethod2 ts = sum $ zipWith zeros (positions ts) ts
 -- Getting problem input
 ------------------------------------------------------------------------
 
-day1InputUrl :: String
-day1InputUrl = "https://adventofcode.com/2025/day/1/input"
-
 strToTurns :: String -> [Turn]
 strToTurns = map parse . lines
     where
@@ -69,7 +66,7 @@ strToTurns = map parse . lines
         parse ('R':n) = read n
 
 day1Input :: IO [Turn]
-day1Input = fetchAOCBody day1InputUrl <&> strToTurns . BS.unpack
+day1Input = fetchBodyStr (inputAOCURL 1) <&> strToTurns
 
 ------------------------------------------------------------------------
 

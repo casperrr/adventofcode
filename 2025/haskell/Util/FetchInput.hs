@@ -12,12 +12,18 @@ getAOCCookie = do
     loadFile defaultConfig
     getEnv "AOC_SESSION"
 
-fetchAOC :: String -> IO (Response ByteString)
-fetchAOC url = do
+fetch :: String -> IO (Response ByteString)
+fetch url = do
     cookie <- getAOCCookie
     initReq <- parseRequest url
     let req = addRequestHeader hCookie (BS.pack $ "session=" ++ cookie) initReq
     httpBS req
 
-fetchAOCBody :: String -> IO ByteString
-fetchAOCBody url = getResponseBody <$> fetchAOC url
+fetchBody :: String -> IO ByteString
+fetchBody url = getResponseBody <$> fetch url
+
+fetchBodyStr :: String -> IO String
+fetchBodyStr url = BS.unpack . getResponseBody <$> fetch url
+
+inputAOCURL :: Int -> String
+inputAOCURL d = "https://adventofcode.com/2025/day/"++ show d ++ "/input"
