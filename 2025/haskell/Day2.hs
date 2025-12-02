@@ -1,8 +1,8 @@
 module Day2 where
 
 import Util.FetchInput
-import Data.List.Split (splitOn)
-import System.IO
+import Data.List.Split (splitOn, chunksOf)
+import Data.List (nub)
 
 type Id = String
 type Range = (Id, Id)
@@ -32,6 +32,18 @@ ranges = concatMap makeRange'
 invalid :: Id -> Bool
 invalid = or . sequence [leadZero, repSeq]
 
+-- sequence :: (Traversable t, Monad m) => t (m a) -> m (t a)
+-- sequence :: (Monad m) => [m a] -> m [a]
+-- sequence :: [(->) r a] -> (->) r [a]
+-- sequence :: [r -> a] -> (r -> [a])
+-- sequence :: [r -> a] -> r -> [a]
+
+-- sequence :: (Traversable t, Monad m) => t (m a) -> m (t a)
+-- sequence :: (Monad m) => [m Bool] -> m [Bool]
+-- sequence :: [(->) Id Bool] -> (->) Id [Bool]
+-- sequence :: [Id -> Bool] -> (Id -> [Bool])
+-- sequence :: [Id -> Bool] -> Id -> [Bool]
+
 leadZero :: Id -> Bool
 leadZero id = head id == '0'
 
@@ -42,3 +54,21 @@ repSeq id = a == b
 solve1 :: [Range] -> Int
 solve1 = sum . map read . filter invalid . ranges
 
+----------------------------------------------------------------
+-- Part 2 - Atleast one repeated section
+----------------------------------------------------------------
+
+invalid' :: Id -> Bool
+invalid' = or . sequence [leadZero, repSeq']
+
+repSeq' :: Id -> Bool
+repSeq' id = any (repChunk id) (subSizes $ length id)
+
+repChunk :: Id -> Int -> Bool
+repChunk id = (== 1) . length . nub . (`chunksOf` id)
+
+subSizes :: Int -> [Int]
+subSizes l = [x | x <- [1..l-1], l `mod` x == 0]
+
+solve2 :: [Range] -> Int
+solve2 = sum . map read . filter invalid' . ranges
