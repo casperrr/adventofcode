@@ -10,3 +10,7 @@ main = do
     d1p2 <- day1'
     putStrLn $ "Part 2: " ++ show d1p2
     putStrLn "===== Day 2 ====="
+    d2p1 <- day2
+    putStrLn $ "Part 1: " ++ show d2p1
+    d2p2 <- day2p2
+    putStrLn $ "Part 2: " ++ show d2p2
