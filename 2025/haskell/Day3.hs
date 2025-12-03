@@ -49,5 +49,5 @@ solve2 = sum . map (largest' 12)
 day3 :: IO Int
 day3 = solve1 <$> day3Input
 
-day3p2 :: IO Int
-day3p2 = solve2 <$> day3Input
+day3' :: IO Int
+day3' = solve2 <$> day3Input

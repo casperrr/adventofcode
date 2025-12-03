@@ -78,5 +78,5 @@ solve2 = sum . map read . filter invalid' . ranges
 day2 :: IO Int
 day2 = solve1 <$> day2Input'
 
-day2p2 :: IO Int
-day2p2 = solve2 <$> day2Input'
+day2' :: IO Int
+day2' = solve2 <$> day2Input'
