@@ -1,6 +1,7 @@
 module Day3 where
 
 import Util.FetchInput ( fetchBodyStr, inputAOCURL )
+import Data.List
 
 type Bat = Int
 type Bank = [Bat]
@@ -21,41 +22,48 @@ largest bs = read $ show l1 ++ show l2
         l1 = maximum $ init bs
         l2 = (maximum . tail) $ dropWhile (/= l1) bs
 
-solve1 :: [Bank] -> Int
+solve1 :: [Bank] -> Jolts
 solve1 = sum . map largest
 
 --------------------------------------------------------------------------------------
+-- Part 2 - 12 batteries on
 --------------------------------------------------------------------------------------
 
+takeSec :: Int -> [a] -> [a]
+takeSec n as = take (length as - n + 1) as
 
--- (.)         :: (b1 -> c) ->  -> (a1 -> c)
--- map         :: (a2 -> b2) -> [a2] -> [b2]
--- map         :: (a3 -> b3) -> [a3] -> [b3]
--- (.)         :: ((a2 -> b2) -> ([a2] -> [b2])) -> (a1 -> (a2 -> b2)) -> (a1 -> ([a2] -> [b2]))
--- (.) map     :: (a1 -> (a2 -> b2)) -> (a1 -> ([a2] -> [b2]))
--- (.) map     :: ((a3 -> b3) -> ([a3] -> [b3])) -> ((a3 -> b3) -> ([[a3]] -> [[b3]]))
--- (.) map map :: ((a3 -> b3) -> ([[a3]] -> [[b3]]))
--- (.) map map :: (a3 -> b3) -> [[a3]] -> [[b3]]
+output :: [Bat] -> Jolts
+output = read . concatMap show
 
--- (.)      :: (b1 -> c) -> (a1 -> b1) -> a1 -> c
--- pure     :: Applicative f => a2 -> f a2
--- read     :: Read a3 => String -> a3
--- (.)      :: Read a3 => (String -> a3) -> a1 -> String -> (a1 -> a3)
--- (.) read :: Read a3 => (a1 -> String) -> a1 -> a3
--- (.) read :: Read a3 => (a1 -> [Char]) -> a1 -> a3
--- pure     :: a2 -> [a2]
--- (.) read pure :: Read a3 => Char -> a3
+-----------------------------------------------------------------------------
+-- Idk which one of these is cleanest so im in hell choosing so have them all
+-----------------------------------------------------------------------------
+large1 :: Int -> Bank -> Jolts
+large1 n = output . go n
+    where
+        go :: Int -> [Bat] -> [Bat]
+        go 0 _  = []
+        go k bs = max : go (k-1) rest
+            where
+                max  = (maximum . takeSec k) bs
+                rest = tail $ dropWhile (/= max) bs
 
--- (map . map)   :: (a1 -> b1) -> [[a1]] -> [[b1]]
--- (read . pure) :: Read a2 => Char -> a3
--- (map . map) (read . pure) :: Read a2 => [[Char]] -> [[a2]]
--- (map . map) (read . pure) :: Read a2 => [String] -> [[a2]]
+large2 :: Int -> Bank -> Jolts
+large2 n = output . go n
+    where
+        go :: Int -> [Bat] -> [Bat]
+        go 0 _  = []
+        go k bs = max : go (n-1) (tail $ dropWhile (/= max) bs)
+            where max = (maximum . takeSec n) bs
 
--- (.)            :: (b1 -> c) -> (a1 -> b1) -> (a1 -> c)
--- lines          :: String -> [String]
--- mmrp           :: Read a2 => [String] -> [[a2]]
--- (.) mmrp       :: Read a2 => (a1 -> [String]) -> (a1 -> [[a2]])
--- (.) mmrp lines :: Read a2 => String -> [[a2]]
+large3 :: Int -> Bank -> Jolts
+large3 n = output . take n . go n
+    where go n bs = max : go (n-1) (tail $ dropWhile (/= max) bs)
+            where max = (maximum . takeSec n) bs
+-----------------------------------------------------------------------------
 
--- (mmrp . lines) :: Read a2 => String -> [[a2]]
--- (mmrp . lines) :: String -> [[Int]]
+largest' :: Int -> Bank -> Jolts
+largest' = large3
+
+solve2 :: [Bank] -> Jolts
+solve2 = sum . map (largest' 12)
