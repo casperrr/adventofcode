@@ -1,6 +1,7 @@
 module Main where
 import Day1 (day1, day1')
-import Day2
+import Day2 (day2, day2p2)
+import Day3
 
 main :: IO ()
 main = do
