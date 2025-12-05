@@ -2,6 +2,11 @@ module Day5 where
 
 import Util.FetchInput ( fetchBodyStr, inputAOCURL )
 import Data.List.Split ( splitOn )
+import Data.List
+import Data.Functor
+
+type Id = Int
+type Range = (Id, Id)
 
 e1' :: String
 e1' = "3-5\n\
@@ -15,18 +20,25 @@ e1' = "3-5\n\
        \11\n\
        \17\n\
        \32"
-e1 :: ([Int], [Int])
+e1 :: ([Range], [Id])
 e1 = parse e1'
-e1f :: [Int]
-e1f = fst e1
-e1a :: [Int]
-e1a = snd e1
 
-parse :: String -> ([Int], [Int])
-parse s = (fids, aids)
+day5Input :: IO ([Range], [Id])
+day5Input = parse <$> fetchBodyStr (inputAOCURL 5)
+
+parse :: String -> ([Range], [Id])
+parse s = (iids, aids)
     where
         [iid, aid] = splitOn "\n\n" s
-        aids = map read $ lines aid
-        fids = lines iid >>= pRange
-        pRange r = let [a,b] = splitOn "-" r in [read a .. read b]
+        pRange r = let [a,b] = splitOn "-" r in (read a, read b)
+        iids = lines iid <&> pRange
+        aids = lines aid <&> read
 
+fresh :: ([Range], [Id]) -> [Id]
+fresh (rgs, ids) = filter (inRange rgs) ids
+
+inRange :: [Range] -> Id -> Bool
+inRange rgs id = any (\(a,b) -> id >= a && id <= b) rgs
+
+solve1 :: ([Range], [Id]) -> Int
+solve1 = length . fresh
