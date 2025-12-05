@@ -19,6 +19,7 @@ executable adventofcode2025
                       Day2,
                       Day3,
                       Day4,
+                      Day5,
                       Util.FetchInput
     -- other-extensions: 
     build-depends:    base ^>=4.18.3.0,
