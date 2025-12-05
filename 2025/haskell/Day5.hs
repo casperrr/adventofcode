@@ -52,8 +52,8 @@ solve1 = length . fresh
 -------------------------------------------------------------
 
 -- naive attempt
-naive :: [Range] -> [Id]
-naive rs = nub $ concatMap (\(a,b) -> [a..b]) rs
+naive :: [Range] -> Int
+naive = length . nub <$> concatMap (\(a,b) -> [a..b])
 
 rsize :: Range -> Int
 rsize (a,b) = b - a + 1
