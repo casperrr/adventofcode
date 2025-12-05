@@ -2,11 +2,10 @@
 module Day4 where
 
 import Util.FetchInput ( fetchBodyStr, inputAOCURL )
-import Data.List
-import Control.Monad
+import Data.Set (Set)
+import qualified Data.Set as S
 
-type Grid = [[Char]]
-type Pos = (Int, Int) -- (x, y)
+type Pos = (Int, Int)
 
 e1' :: String
 e1' = "..@@.@@@@.\n\
@@ -20,36 +19,32 @@ e1' = "..@@.@@@@.\n\
       \.@@@@@@@@.\n\
       \@.@.@@@.@."
 
-e1 :: Grid
-e1 = lines e1'
+e1 :: Set Pos
+e1 = parse e1'
 
-getPos :: Pos -> Grid -> Char
-getPos (x,y) g = g !! y !! x
+parse :: String -> Set Pos
+parse s = S.fromList . map fst . filter ((== '@') . snd) $ [((i,j),x) | (i,row) <- zip [0..] (lines s), (j,x) <- zip [0..] row]
 
-genPos' :: Grid -> [Pos]
-genPos' g = [(x,y) | y <- [0..length g-1], x <- [0..length (head g)-1]]
+day4Input :: IO (Set Pos)
+day4Input = parse <$> fetchBodyStr (inputAOCURL 4)
 
--- genPos :: Grid -> [Pos]
--- genPos g = filter isAt $ genPos g
---     where isAt p = getPos p g == '@'
+kernel :: Int -> Pos -> [Pos]
+kernel k (x,y) = [(x', y') |
+                   x' <- [(x - k) .. (x + k)],
+                   y' <- [(y - k) .. (y + k)],
+                   x' /= x || y' /= y]
 
-genPos :: Grid -> [Pos]
-genPos = concat . zipWith (\y xs -> map (y,) xs) [0..] . map (elemIndices '@')
+adjacent :: Pos -> Set Pos
+adjacent = S.fromList <$> kernel 1
 
-genPosSafe :: Grid -> [Pos]
-genPosSafe g = filter (\(x,y) -> x /= 0 && y /= 0 && x /= length (head g)-1 && y /= length g-1) $ genPos g
+fuck :: Set Pos -> [Set Pos]
+fuck = map adjacent . S.toList
 
-kernel :: Int -> Grid -> Pos -> Grid
-kernel s g (x,y) = [[getPos (x', y') g | x' <- [(x-s)..(x+s)]] | y' <- [(y-s)..(x+s)]]
+filtRolls :: Set Pos -> [Set Pos]
+filtRolls cs = map (S.intersection cs) (fuck cs)
 
-adjacent :: Grid -> Pos -> Grid
-adjacent = kernel 1
+count :: [Set Pos] -> Int
+count = length . filter (<4) . map S.size
 
-countAt :: Grid -> Int
-countAt = length . concatMap (filter (== '@'))
-
-allAdjacent :: Grid -> [Grid]
-allAdjacent = map <$> adjacent <*> genPosSafe
-
-solve1 :: Grid -> Int
-solve1 = sum . filter (<4) . map countAt . allAdjacent
+solve1 :: Set Pos -> Int
+solve1 = count . filtRolls
