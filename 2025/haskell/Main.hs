@@ -3,7 +3,7 @@ import Day1 (day1, day1')
 import Day2 (day2, day2')
 import Day3 (day3, day3')
 import Day4 (day4, day4')
-import Day5
+import Day5 (day5, day5')
 
 main :: IO ()
 main = do
@@ -27,3 +27,8 @@ main = do
     putStrLn $ "Part 1: " ++ show d4p1
     d4p2 <- day4'
     putStrLn $ "Part 2: " ++ show d4p2
+    putStrLn "===== Day 5 ====="
+    d5p1 <- day5
+    putStrLn $ "Part 1: " ++ show d5p1
+    d5p2 <- day5'
+    putStrLn $ "Part 2: " ++ show d5p2

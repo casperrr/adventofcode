@@ -23,8 +23,6 @@ e1' = "3-5\n\
        \32"
 e1 :: Input
 e1 = parse e1'
-f1 = fst e1
-s1 = snd e1
 
 day5Input :: IO Input
 day5Input = parse <$> fetchBodyStr (inputAOCURL 5)
@@ -60,14 +58,6 @@ naive rs = nub $ concatMap (\(a,b) -> [a..b]) rs
 rsize :: Range -> Int
 rsize (a,b) = b - a + 1
 
--- not using this because I can use foldr instead
-reduce' :: [Range] -> [Range]
-reduce' [] = []
-reduce' [a] = [a]
-reduce' ((a1,b1):(a2,b2):rs)
-    | b1 >= a2 = reduce' $ (a1, max b1 b2) : rs
-    | otherwise = (a1,b1) : reduce' ((a2,b2):rs)
-
 reduce :: [Range] -> [Range]
 reduce = foldr merge [] . sortOn fst
 
@@ -79,3 +69,11 @@ merge r1@(a1,b1) (r2@(a2,b2):rs)
 
 solve2 :: Input -> Int
 solve2 = sum . map rsize . reduce . fst
+
+-------------------------------------------------------------
+
+day5 :: IO Int
+day5 = solve1 <$> day5Input
+
+day5' :: IO Int
+day5' = solve2 <$> day5Input
