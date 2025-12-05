@@ -2,11 +2,12 @@ module Day5 where
 
 import Util.FetchInput ( fetchBodyStr, inputAOCURL )
 import Data.List.Split ( splitOn )
-import Data.List
-import Data.Functor
+import Data.List ( nub, sortOn )
+import Data.Functor ( (<&>) )
 
 type Id = Int
 type Range = (Id, Id)
+type Input = ([Range], [Id])
 
 e1' :: String
 e1' = "3-5\n\
@@ -20,13 +21,15 @@ e1' = "3-5\n\
        \11\n\
        \17\n\
        \32"
-e1 :: ([Range], [Id])
+e1 :: Input
 e1 = parse e1'
+f1 = fst e1
+s1 = snd e1
 
-day5Input :: IO ([Range], [Id])
+day5Input :: IO Input
 day5Input = parse <$> fetchBodyStr (inputAOCURL 5)
 
-parse :: String -> ([Range], [Id])
+parse :: String -> Input
 parse s = (iids, aids)
     where
         [iid, aid] = splitOn "\n\n" s
@@ -34,11 +37,45 @@ parse s = (iids, aids)
         iids = lines iid <&> pRange
         aids = lines aid <&> read
 
-fresh :: ([Range], [Id]) -> [Id]
-fresh (rgs, ids) = filter (inRange rgs) ids
+fresh :: Input -> [Id]
+fresh (rgs, ids) = filter (inRanges rgs) ids
 
-inRange :: [Range] -> Id -> Bool
-inRange rgs id = any (\(a,b) -> id >= a && id <= b) rgs
+inRange :: Range -> Id -> Bool
+inRange (a,b) id = id >= a && id <= b
 
-solve1 :: ([Range], [Id]) -> Int
+inRanges :: [Range] -> Id -> Bool
+inRanges rgs id = any (`inRange` id) rgs
+
+solve1 :: Input -> Int
 solve1 = length . fresh
+
+-------------------------------------------------------------
+-- Part 2 - 
+-------------------------------------------------------------
+
+-- naive attempt
+naive :: [Range] -> [Id]
+naive rs = nub $ concatMap (\(a,b) -> [a..b]) rs
+
+rsize :: Range -> Int
+rsize (a,b) = b - a + 1
+
+-- not using this because I can use foldr instead
+reduce' :: [Range] -> [Range]
+reduce' [] = []
+reduce' [a] = [a]
+reduce' ((a1,b1):(a2,b2):rs)
+    | b1 >= a2 = reduce' $ (a1, max b1 b2) : rs
+    | otherwise = (a1,b1) : reduce' ((a2,b2):rs)
+
+reduce :: [Range] -> [Range]
+reduce = foldr merge [] . sortOn fst
+
+merge :: Range -> [Range] -> [Range]
+merge r [] = [r]
+merge r1@(a1,b1) (r2@(a2,b2):rs)
+    | b1 >= a2  = (a1, max b1 b2):rs
+    | otherwise = r1:r2:rs
+
+solve2 :: Input -> Int
+solve2 = sum . map rsize . reduce . fst
