@@ -1,8 +1,8 @@
 module Day6 where
 
 import Util.FetchInput ( fetchBodyStr, inputAOCURL )
-import Data.List
-import Data.List.Split
+import Data.List ( transpose )
+import Data.List.Split ( splitOneOf, splitPlaces )
 
 e1 :: String
 e1 = "123 328  51 64 \n\

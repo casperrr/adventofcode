@@ -1,11 +1,16 @@
 module Util.FetchInput where
 
-import Configuration.Dotenv
-import System.Environment (getEnv)
+import Configuration.Dotenv ( loadFile, defaultConfig )
+import System.Environment ( getEnv )
 import Network.HTTP.Simple
-import Network.HTTP.Types.Header
+    ( parseRequest,
+      addRequestHeader,
+      getResponseBody,
+      httpBS,
+      Response )
+import Network.HTTP.Types.Header ( hCookie )
 import qualified Data.ByteString.Char8 as BS
-import Data.ByteString (ByteString)
+import Data.ByteString ( ByteString )
 
 getAOCCookie :: IO String
 getAOCCookie = do

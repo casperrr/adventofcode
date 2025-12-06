@@ -1,6 +1,6 @@
 module Day2 where
 
-import Util.FetchInput
+import Util.FetchInput ( fetchBodyStr, inputAOCURL )
 import Data.List.Split (splitOn, chunksOf)
 import Data.List (nub)
 

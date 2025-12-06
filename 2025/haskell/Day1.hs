@@ -1,10 +1,10 @@
 -- Advent of code - Day 1
 module Day1 where
 
-import Util.FetchInput
+import Util.FetchInput ( fetchBodyStr, inputAOCURL )
 import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as BS
-import Data.Functor
+import Data.Functor ( (<&>) )
 
 data OldTurn = L Int | R Int deriving (Show, Eq)
 type Turn = Int
