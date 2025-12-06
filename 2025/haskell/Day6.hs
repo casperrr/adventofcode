@@ -41,3 +41,11 @@ part2 = map (fix . transpose) . parse
 
 solve2 :: String -> Int
 solve2 = sum . map eval . part2
+
+--------------------------------------------------------------
+
+day6 :: IO Int
+day6 = solve1 <$> input
+
+day6' :: IO Int
+day6' = solve2 <$> input
